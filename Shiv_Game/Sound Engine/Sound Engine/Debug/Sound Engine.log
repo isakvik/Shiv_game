@@ -1,0 +1,15 @@
+﻿Build started 9. apr 2016 21.26.17.
+     1>Project "C:\Users\Jesper\documents\visual studio 2010\Projects\Sound Engine\Sound Engine\Sound Engine.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Touching "Debug\soundEngine.unsuccessfulbuild".
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt frameworkSound.cpp
+         frameworkSound.cpp
+     1>c:\users\jesper\documents\visual studio 2010\projects\sound engine\sound engine\frameworksound.cpp(34): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(234) : see declaration of 'fopen'
+     1>c:\users\jesper\documents\visual studio 2010\projects\sound engine\sound engine\frameworksound.cpp(151): fatal error C1075: end of file found before the left brace '{' at 'c:\users\jesper\documents\visual studio 2010\projects\sound engine\sound engine\frameworksound.cpp(30)' was matched
+     1>Done Building Project "C:\Users\Jesper\documents\visual studio 2010\Projects\Sound Engine\Sound Engine\Sound Engine.vcxproj" (build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.67
