@@ -58,7 +58,7 @@ bool frameworkInit(){
 		else{
 			int flags = IMG_INIT_PNG;
 			int initted = IMG_Init(flags);
-			if( flags&initted != flags ){
+			if( flags && (initted != flags )){
 				cout << "IMG could not initialize:\n" << IMG_GetError() <<"\nOccured in file and line respectively:\n" << __FILE__ << "\t" << __LINE__ << endl; 
 
 				bInitSuccess = false;

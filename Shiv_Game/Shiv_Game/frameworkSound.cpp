@@ -145,8 +145,6 @@ int frameworkSound::loadSound() {
 		delete[] buf;														//Deletes sound data buffer
 		alDeleteSources(1, &source);										//Deletes the OpenAL source
 		alDeleteBuffers(1, &buffer);										//Deletes the OpenAL bufer
-
-	}
-
+		
 	return EXIT_SUCCESS;
 }
