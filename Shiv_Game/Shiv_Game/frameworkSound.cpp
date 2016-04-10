@@ -8,17 +8,16 @@
 
 using namespace std;
 
-int frameworkSound::endWithError(char* msg)
-{
-	//Function that displays an error message, then exits the function
-	cout << msg << "\n";
-	system("PAUSE");
-	return 0;
-}
-using namespace std;
-
 frameworkSound::frameworkSound(void)
 {
+	
+	//Creates variables to store information needed to load sound to...
+	//Buffers and sources
+	ALuint frequency = sampleRate;											//Samplerate of the WAVE file
+	ALenum format = 0;														//Audio format (bits per sample, number of channels)
+	
+	
+	bool bLoadSuccess = true;												//Creates a variable that will return to tell if the code succeded or not
 }  
 
 
@@ -27,67 +26,75 @@ frameworkSound::~frameworkSound(void)
 }
 
 //Function that loads a soundfile, into a source
-int frameworkSound::loadSound() {
+bool frameworkSound::loadSound() {
 
 	//Loading the wave file
 	FILE *fp = NULL;														//Creates a FILE pointer
 	fp = fopen("applause.wav", "rb");										//Opens the WAVE file
 	if (fp == NULL)															//Could not open file
 	{
-		return endWithError("Error: Failed to open file");
+		cout << "Error: Not a RIFF format" << endl;
+		bLoadSuccess = false;
+
+		return bLoadSuccess;
 	}
 
-
-	//Creates variables to store information about the WAVE file
-	char type[4];
-	DWORD size, chunkSize;
-	short formatType, channels;
-	DWORD sampleRate, avgBytesPerSec;
-	short bytesPerSample, bitsPerSample;
-	DWORD dataSize;
 
 
 	//Checks if the WAVE file is ok
-	fread(type, sizeof(char), 4, fp);									//Reads the first four bits of the WAVE file
+	fread(type, sizeof(char), 4, fp);									//fread reads the bits of the sound file to find information
 	if (!strcmp(type, "RIFF"))											//Checks if the first four bits contains RIFF
 	{
-		return endWithError("Error: Not a RIFF format");
+		cout << "Error: Not a RIFF format" << endl;
+		bLoadSuccess = false;
+
+		return bLoadSuccess;
 	}
 
-	fread(&size, sizeof(DWORD), 1, fp);									//Reads the next bit, which contains the size of the WAVE file
+	fread(&size, sizeof(DWORD), 1, fp);									
 
-	fread(type, sizeof(char), 4, fp);									//Reads the next four bits of the WAVE file
-	if (!strcmp(type, "WAVE"))											//Checks if it they contain WAWE
+	fread(type, sizeof(char), 4, fp);									
+	if (!strcmp(type, "WAVE"))											
 	{
-		return endWithError("Error: Not a WAVE format");
+		cout << "Error: Not a WAVE format" << endl;
+		bLoadSuccess = false;
+
+		return bLoadSuccess;
 	}
 
-	fread(type, sizeof(char), 4, fp);									//Reads the next four bits of the WAVE file
-	if (!strcmp(type, "fmt ")) {											//Checks if it they contain "fmt "
-			return endWithError("Error: Not a fmt format");
-		}
+	fread(type, sizeof(char), 4, fp);									
+	if (!strcmp(type, "fmt ")) 											
+	{	
+		cout << "Error: Not a fmt format" << endl;
+		bLoadSuccess = false;
 
-		fread(&chunkSize, sizeof(DWORD), 1, fp);							//Reads the next bit, which contains the chunksize of the WAVE file
+		return bLoadSuccess;
+	}
 
-		fread(&formatType, sizeof(short), 1, fp);							//Reads the next bit, which contains the formattype of the WAVE file
+		fread(&chunkSize, sizeof(DWORD), 1, fp);							
 
-		fread(&channels, sizeof(short), 1, fp);								//Reads the next bit, which contains the channels of the WAVE file
+		fread(&formatType, sizeof(short), 1, fp);							
 
-		fread(&sampleRate, sizeof(DWORD), 1, fp);							//Reads the next bit, which contains the samplerate of the WAVE file
+		fread(&channels, sizeof(short), 1, fp);								
 
-		fread(&avgBytesPerSec, sizeof(DWORD), 1, fp);						//Reads the next bit, which contains the size of the WAVE file	
+		fread(&sampleRate, sizeof(DWORD), 1, fp);							
 
-		fread(&bytesPerSample, sizeof(short), 1, fp);						//Reads the next bit, which contains the size of the WAVE file
+		fread(&avgBytesPerSec, sizeof(DWORD), 1, fp);							
 
-		fread(&bitsPerSample, sizeof(short), 1, fp);						//Reads the next bit, which contains the size of the WAVE file
+		fread(&bytesPerSample, sizeof(short), 1, fp);						
 
-		fread(type, sizeof(char), 4, fp);									//Reads the next four bits, which contains the data of the WAVE file
-		if (!strcmp(type, "data"))											//Checks if they contain "data"
+		fread(&bitsPerSample, sizeof(short), 1, fp);						
+
+		fread(type, sizeof(char), 4, fp);									
+		if (!strcmp(type, "data"))											
 		{
-			return endWithError("Error: Missing Data");
+			cout << "Error: Missing Data" << endl;
+			bLoadSuccess = false;
+
+			return bLoadSuccess;
 		}
 
-		fread(&dataSize, sizeof(DWORD), 1, fp);								//Reads the next bit, which contains the datasize of the WAVE file
+		fread(&dataSize, sizeof(DWORD), 1, fp);								
 
 
 
@@ -96,10 +103,7 @@ int frameworkSound::loadSound() {
 
 
 
-		ALuint source;														//Where the sound comes from	
-		ALuint buffer;														//Contains the sound data
-		ALuint frequency = sampleRate;										//Samplerate of the WAVE file
-		ALenum format = 0;													//Audio format (bits per sample, number of channels)
+
 
 
 
@@ -107,7 +111,10 @@ int frameworkSound::loadSound() {
 		alGenSources(1, &source);											//Generates a OpenAL source and link to "source"
 		if (alGetError() != AL_NO_ERROR)										//If there is any error during the generating
 		{
-			return endWithError("Error: GenSource");
+			cout << "Error: GenSource" << endl;
+			bLoadSuccess = false;
+
+			return bLoadSuccess;
 		}
 
 
@@ -127,19 +134,32 @@ int frameworkSound::loadSound() {
 				format = AL_FORMAT_STEREO16;
 		}
 
-		if (!format)															//If there is no format for the WAVE file
-			return endWithError("Error: Wrong BitPerSample");
+		if (!format)														//If there is no format for the WAVE file			
+		{
+		
+			cout << "Error: Wrong BitPerSample" << endl;
+			bLoadSuccess = false;
 
+			return bLoadSuccess;
+		}
 
 
 		alBufferData(buffer, format, buf, dataSize, frequency);				//Stores the sound in the OpenAL buffer
-		if (alGetError() != AL_NO_ERROR)										//If there is an error loading the buffer
-			return endWithError("Error: Loading ALBuffer");
+		if (alGetError() != AL_NO_ERROR)									//If there is an error loading the buffer
+		{	
+			cout << "Error: Loading ALBuffer" << endl;
+			bLoadSuccess = false;
 
+			return bLoadSuccess;
+		}
 		alSourcei(source, AL_BUFFER, buffer);								//Connects buffer to source (Sound to object)
-		if (alGetError() != AL_NO_ERROR)										//If there is an error loading the source
-			return endWithError("Error: Loading ALSource");
+		if (alGetError() != AL_NO_ERROR)									//If there is an error loading the source
+		{	
+			cout << "Error: Loading ALSource" <<  endl;
+			bLoadSuccess = false;
 
+			return bLoadSuccess;
+		}
 
 		fclose(fp);															//Closes the WAVE file
 		delete[] buf;														//Deletes sound data buffer
