@@ -1,4 +1,10 @@
 #pragma once
+#include <string>
+#include <windows.h>
+#include <al.h>
+#include <alc.h>
+
+using namespace std;
 
 class frameworkSound
 {
@@ -6,7 +12,9 @@ public:
 	frameworkSound(void);
 	~frameworkSound(void);
 
-	bool loadSound();
+	bool loadSound(string urlSound);
+
+	bool playSound();
 
 private:
 	
@@ -28,5 +36,6 @@ private:
 	ALenum format;
 
 	bool bLoadSuccess;
+	bool bPlaySuccess;
 };
 

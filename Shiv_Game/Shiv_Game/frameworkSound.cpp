@@ -5,7 +5,7 @@
 #include <al.h>
 #include <alc.h>
 #include <string>
-
+#include <stdio.h>
 using namespace std;
 
 frameworkSound::frameworkSound(void)
@@ -16,8 +16,8 @@ frameworkSound::frameworkSound(void)
 	ALuint frequency = sampleRate;											//Samplerate of the WAVE file
 	ALenum format = 0;														//Audio format (bits per sample, number of channels)
 	
-	
 	bool bLoadSuccess = true;												//Creates a variable that will return to tell if the code succeded or not
+	bool bPlaySuccess = true;
 }  
 
 
@@ -26,11 +26,11 @@ frameworkSound::~frameworkSound(void)
 }
 
 //Function that loads a soundfile, into a source
-bool frameworkSound::loadSound() {
+bool frameworkSound::loadSound(string urlSound) {
 
 	//Loading the wave file
 	FILE *fp = NULL;														//Creates a FILE pointer
-	fp = fopen("applause.wav", "rb");										//Opens the WAVE file
+	fopen_s(&fp, urlSound.c_str(), "r");									//Opens the WAVE file
 	if (fp == NULL)															//Could not open file
 	{
 		cout << "Error: Not a RIFF format" << endl;
@@ -103,10 +103,6 @@ bool frameworkSound::loadSound() {
 
 
 
-
-
-
-
 		alGenBuffers(1, &buffer);											//Generates a OpenAL buffer and a link "buffer"
 		alGenSources(1, &source);											//Generates a OpenAL source and link to "source"
 		if (alGetError() != AL_NO_ERROR)										//If there is any error during the generating
@@ -161,10 +157,13 @@ bool frameworkSound::loadSound() {
 			return bLoadSuccess;
 		}
 
-		fclose(fp);															//Closes the WAVE file
-		delete[] buf;														//Deletes sound data buffer
-		alDeleteSources(1, &source);										//Deletes the OpenAL source
-		alDeleteBuffers(1, &buffer);										//Deletes the OpenAL bufer
+												//Deletes the OpenAL buffer
 		
-	return EXIT_SUCCESS;
+	return bLoadSuccess;
+}
+
+bool frameworkSound::playSound()
+{
+	 alSourcePlay(source);
+	 return bPlaySuccess;
 }
