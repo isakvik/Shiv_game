@@ -13,7 +13,7 @@ frameworkSound::frameworkSound(void)
 	
 	//Creates variables to store information needed to load sound to...
 	//Buffers and sources
-	ALuint frequency = sampleRate;											//Samplerate of the WAVE file
+	ALuint frequency = sampleRate;									//Samplerate of the WAVE file
 	ALenum format = 0;														//Audio format (bits per sample, number of channels)
 	
 	bool bLoadSuccess = true;												//Creates a variable that will return to tell if the code succeded or not
@@ -94,17 +94,26 @@ bool frameworkSound::loadSound(string urlSound) {
 			return bLoadSuccess;
 		}
 
-		fread(&dataSize, sizeof(DWORD), 1, fp);								
+		fread(&dataSize, sizeof(DWORD), 1, fp);		
+
+		cout << "Chunk Size: " << chunkSize << "\n";
+		cout << "Format Type: " << formatType << "\n";
+		cout << "Channels: " << channels << "\n";
+		cout << "Sample Rate: " << sampleRate << "\n";
+		cout << "Average Bytes Per Second: " << avgBytesPerSec << "\n";
+		cout << "Bytes Per Sample: " << bytesPerSample << "\n";
+		cout << "Bits Per Sample: " << bitsPerSample << "\n";
+		cout << "Data Size: " << dataSize << "\n";
 
 
 
-		unsigned char* buf = new unsigned char[dataSize];					//Allocates memory for the sound data
+		string* buf = new string[dataSize];					//Allocates memory for the sound data
 		fread(buf, sizeof(BYTE), dataSize, fp);								//Reads the sound data
+			
 
 
-
-		alGenBuffers(1, &buffer);											//Generates a OpenAL buffer and a link "buffer"
-		alGenSources(1, &source);											//Generates a OpenAL source and link to "source"
+		alGenBuffers(1, &bufferID);											//Generates a OpenAL buffer and link "buffer"
+		alGenSources(1, &sourceID);											//Generates a OpenAL source and link to "source"
 		if (alGetError() != AL_NO_ERROR)										//If there is any error during the generating
 		{
 			cout << "Error: GenSource" << endl;
@@ -130,6 +139,7 @@ bool frameworkSound::loadSound(string urlSound) {
 				format = AL_FORMAT_STEREO16;
 		}
 
+
 		if (!format)														//If there is no format for the WAVE file			
 		{
 		
@@ -139,23 +149,29 @@ bool frameworkSound::loadSound(string urlSound) {
 			return bLoadSuccess;
 		}
 
+		cout << "bufferID: " << bufferID << "\n";
+		cout << "format: "<< format << "\n";
+		cout << "buf: "<< buf << "\n";
+		cout << "dataSize: "<< dataSize << "\n";
+		cout << "frequency: "<< frequency << "\n";
 
-		alBufferData(buffer, format, buf, dataSize, frequency);				//Stores the sound in the OpenAL buffer
-		if (alGetError() != AL_NO_ERROR)									//If there is an error loading the buffer
-		{	
-			cout << "Error: Loading ALBuffer" << endl;
-			bLoadSuccess = false;
+		alBufferData(bufferID, format, buf, dataSize, frequency);				//Stores the sound in the OpenAL buffer
+		if (alGetError() != AL_NO_ERROR)                                    //If there is an error loading the buffer
+        {
+            cout << "Error: Loading ALBuffer" << endl;
+            bLoadSuccess = false;
 
-			return bLoadSuccess;
-		}
-		alSourcei(source, AL_BUFFER, buffer);								//Connects buffer to source (Sound to object)
-		if (alGetError() != AL_NO_ERROR)									//If there is an error loading the source
-		{	
-			cout << "Error: Loading ALSource" <<  endl;
-			bLoadSuccess = false;
+            return bLoadSuccess;
+        }
 
-			return bLoadSuccess;
-		}
+		alSourcei(sourceID, AL_BUFFER, bufferID);								//Connects buffer to source (Sound to object)
+		if (alGetError() != AL_NO_ERROR)                                    //If there is an error loading the source
+        {
+            cout << "Error: Loading ALSource" <<  endl;
+            bLoadSuccess = false;
+
+            return bLoadSuccess;
+        }
 
 												//Deletes the OpenAL buffer
 		
@@ -164,6 +180,6 @@ bool frameworkSound::loadSound(string urlSound) {
 
 bool frameworkSound::playSound()
 {
-	 alSourcePlay(source);
+	 alSourcePlay(sourceID);
 	 return bPlaySuccess;
 }

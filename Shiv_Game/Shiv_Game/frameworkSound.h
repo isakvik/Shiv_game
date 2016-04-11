@@ -28,8 +28,8 @@ private:
 
 
 	//Creates variables for sources and buffers
-	ALuint source;											//Where the sound comes from	
-	ALuint buffer;											//Contains the sound data
+	ALuint sourceID;											//Where the sound comes from	
+	ALuint bufferID;											//Contains the sound data
 	
 	//Look in constructor for information
 	ALuint frequency;													
