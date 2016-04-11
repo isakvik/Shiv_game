@@ -13,7 +13,7 @@ frameworkSound::frameworkSound(void)
 	
 	//Creates variables to store information needed to load sound to...
 	//Buffers and sources
-	ALuint frequency = sampleRate;									//Samplerate of the WAVE file
+	
 	ALenum format = 0;														//Audio format (bits per sample, number of channels)
 	
 	bool bLoadSuccess = true;												//Creates a variable that will return to tell if the code succeded or not
@@ -107,8 +107,8 @@ bool frameworkSound::loadSound(string urlSound) {
 
 
 
-		string* buf = new string[dataSize];					//Allocates memory for the sound data
-		fread(buf, sizeof(BYTE), dataSize, fp);								//Reads the sound data
+		unsigned char* data = new unsigned char[dataSize];					//Allocates memory for the sound data
+		fread(data, sizeof(BYTE), dataSize, fp);	     	//Reads the sound data
 			
 
 
@@ -148,14 +148,15 @@ bool frameworkSound::loadSound(string urlSound) {
 
 			return bLoadSuccess;
 		}
+		
+		ALuint frequency = static_cast <unsigned int> (sampleRate);									//Samplerate of the WAVE file
 
 		cout << "bufferID: " << bufferID << "\n";
 		cout << "format: "<< format << "\n";
-		cout << "buf: "<< buf << "\n";
 		cout << "dataSize: "<< dataSize << "\n";
 		cout << "frequency: "<< frequency << "\n";
 
-		alBufferData(bufferID, format, buf, dataSize, frequency);				//Stores the sound in the OpenAL buffer
+		alBufferData(bufferID, format, data, dataSize, frequency);				//Stores the sound in the OpenAL buffer
 		if (alGetError() != AL_NO_ERROR)                                    //If there is an error loading the buffer
         {
             cout << "Error: Loading ALBuffer" << endl;
