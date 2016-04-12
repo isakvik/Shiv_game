@@ -9,11 +9,18 @@ using namespace std;
 class frameworkSound
 {
 public:
+	//Constructor
 	frameworkSound(void);
+	
+	//Deconstructor
 	~frameworkSound(void);
 
+	bool endWithError(string msg);
+	
+	//Function to load sound into object
 	bool loadSound(string urlSound);
 
+	//Function to play sound 
 	bool playSound();
 
 private:
@@ -26,10 +33,9 @@ private:
 	short bytesPerSample, bitsPerSample;
 	DWORD dataSize;
 
-
 	//Creates variables for sources and buffers
-	ALuint sourceID;											//Where the sound comes from	
-	ALuint bufferID;											//Contains the sound data
+	ALuint sourceID;												
+	ALuint bufferID;											
 	
 	//Look in constructor for information
 	ALuint frequency;													

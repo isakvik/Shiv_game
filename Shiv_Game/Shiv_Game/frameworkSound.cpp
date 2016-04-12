@@ -10,13 +10,11 @@ using namespace std;
 
 frameworkSound::frameworkSound(void)
 {
+	//Creates variable to store format type
+	ALenum format = 0;														
 	
-	//Creates variables to store information needed to load sound to...
-	//Buffers and sources
-	
-	ALenum format = 0;														//Audio format (bits per sample, number of channels)
-	
-	bool bLoadSuccess = true;												//Creates a variable that will return to tell if the code succeded or not
+	//Values that will return as true or false, depending of if it fails or not
+	bool bLoadSuccess = true;												
 	bool bPlaySuccess = true;
 }  
 
@@ -25,18 +23,23 @@ frameworkSound::~frameworkSound(void)
 {
 }
 
+bool frameworkSound::endWithError(string msg)
+{
+	cout << msg << endl;
+	bLoadSuccess = false;
+
+	return bLoadSuccess;
+}
+
 //Function that loads a soundfile, into a source
 bool frameworkSound::loadSound(string urlSound) {
 
 	//Loading the wave file
-	FILE *fp = NULL;														//Creates a FILE pointer
-	fopen_s(&fp, urlSound.c_str(), "r");									//Opens the WAVE file
-	if (fp == NULL)															//Could not open file
+	FILE *fp = NULL;													//Creates a FILE pointer
+	fopen_s(&fp, urlSound.c_str(), "r");								//Opens the WAVE file
+	if (fp == NULL)														//Could not open file
 	{
-		cout << "Error: Not a RIFF format" << endl;
-		bLoadSuccess = false;
-
-		return bLoadSuccess;
+		endWithError("Error: Not a RIFF format");
 	}
 
 
@@ -45,10 +48,7 @@ bool frameworkSound::loadSound(string urlSound) {
 	fread(type, sizeof(char), 4, fp);									//fread reads the bits of the sound file to find information
 	if (!strcmp(type, "RIFF"))											//Checks if the first four bits contains RIFF
 	{
-		cout << "Error: Not a RIFF format" << endl;
-		bLoadSuccess = false;
-
-		return bLoadSuccess;
+		endWithError("Error: Not a RIFF format");
 	}
 
 	fread(&size, sizeof(DWORD), 1, fp);									
@@ -56,19 +56,13 @@ bool frameworkSound::loadSound(string urlSound) {
 	fread(type, sizeof(char), 4, fp);									
 	if (!strcmp(type, "WAVE"))											
 	{
-		cout << "Error: Not a WAVE format" << endl;
-		bLoadSuccess = false;
-
-		return bLoadSuccess;
+		endWithError("Error: Not a WAVE format");
 	}
 
 	fread(type, sizeof(char), 4, fp);									
 	if (!strcmp(type, "fmt ")) 											
 	{	
-		cout << "Error: Not a fmt format" << endl;
-		bLoadSuccess = false;
-
-		return bLoadSuccess;
+		endWithError("Error: Not a fmt format");
 	}
 
 		fread(&chunkSize, sizeof(DWORD), 1, fp);							
@@ -88,14 +82,13 @@ bool frameworkSound::loadSound(string urlSound) {
 		fread(type, sizeof(char), 4, fp);									
 		if (!strcmp(type, "data"))											
 		{
-			cout << "Error: Missing Data" << endl;
-			bLoadSuccess = false;
-
-			return bLoadSuccess;
+			endWithError("Error: Missing Data");
 		}
 
 		fread(&dataSize, sizeof(DWORD), 1, fp);		
 
+
+		//Prints out information for debugging purposes
 		cout << "Chunk Size: " << chunkSize << "\n";
 		cout << "Format Type: " << formatType << "\n";
 		cout << "Channels: " << channels << "\n";
@@ -106,20 +99,17 @@ bool frameworkSound::loadSound(string urlSound) {
 		cout << "Data Size: " << dataSize << "\n";
 
 
-
+		//Creates an array to store the data of the sound file
 		unsigned char* data = new unsigned char[dataSize];					//Allocates memory for the sound data
-		fread(data, sizeof(BYTE), dataSize, fp);	     	//Reads the sound data
+		fread(data, sizeof(BYTE), dataSize, fp);	     					//Reads the sound data
 			
 
-
-		alGenBuffers(1, &bufferID);											//Generates a OpenAL buffer and link "buffer"
-		alGenSources(1, &sourceID);											//Generates a OpenAL source and link to "source"
-		if (alGetError() != AL_NO_ERROR)										//If there is any error during the generating
+		//Generates buffers and sources
+		alGenBuffers(1, &bufferID);											
+		alGenSources(1, &sourceID);											
+		if (alGetError() != AL_NO_ERROR)									
 		{
-			cout << "Error: GenSource" << endl;
-			bLoadSuccess = false;
-
-			return bLoadSuccess;
+			endWithError("Error: GenSource");
 		}
 
 
@@ -139,43 +129,34 @@ bool frameworkSound::loadSound(string urlSound) {
 				format = AL_FORMAT_STEREO16;
 		}
 
-
-		if (!format)														//If there is no format for the WAVE file			
+		//If there is no format for the WAVE file	
+		if (!format)																
 		{
-		
-			cout << "Error: Wrong BitPerSample" << endl;
-			bLoadSuccess = false;
-
-			return bLoadSuccess;
+			endWithError("Error: Wrong BitPerSample");
 		}
 		
-		ALuint frequency = static_cast <unsigned int> (sampleRate);									//Samplerate of the WAVE file
+		ALuint frequency = static_cast <unsigned int> (sampleRate);			//Sets frequency to samplerate					
 
+
+		//Prints out information for debugging purposes
 		cout << "bufferID: " << bufferID << "\n";
 		cout << "format: "<< format << "\n";
 		cout << "dataSize: "<< dataSize << "\n";
 		cout << "frequency: "<< frequency << "\n";
 
-		alBufferData(bufferID, format, data, dataSize, frequency);				//Stores the sound in the OpenAL buffer
-		if (alGetError() != AL_NO_ERROR)                                    //If there is an error loading the buffer
+		alBufferData(bufferID, format, data, dataSize, frequency);			//Stores the sound in the OpenAL buffer
+		if (alGetError() != AL_NO_ERROR)										
         {
-            cout << "Error: Loading ALBuffer" << endl;
-            bLoadSuccess = false;
-
-            return bLoadSuccess;
+            endWithError("Error: Loading ALBuffer");
         }
 
-		alSourcei(sourceID, AL_BUFFER, bufferID);								//Connects buffer to source (Sound to object)
-		if (alGetError() != AL_NO_ERROR)                                    //If there is an error loading the source
+		alSourcei(sourceID, AL_BUFFER, bufferID);							//Connects buffer to source (Sound to object)
+		if (alGetError() != AL_NO_ERROR)                                    
         {
-            cout << "Error: Loading ALSource" <<  endl;
-            bLoadSuccess = false;
-
-            return bLoadSuccess;
+            endWithError("Error: Loading ALSource");
         }
 
-												//Deletes the OpenAL buffer
-		
+
 	return bLoadSuccess;
 }
 
