@@ -22,9 +22,22 @@
 *.lib
 
 # Executables
-*.exe
+*.exe*
 *.out
 *.app
 
 # Project files (own)
 *.vcxproj*
+*.log
+*.tlog
+*.ipch
+*.sln
+*.suo
+*.VC.db
+*.opensdf
+*.sdf
+*.idb
+*.pdb
+*.lastbuildstate
+*.ilk
+*.manifest
