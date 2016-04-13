@@ -25,3 +25,6 @@
 *.exe
 *.out
 *.app
+
+# Project files (own)
+*.vcxproj*
