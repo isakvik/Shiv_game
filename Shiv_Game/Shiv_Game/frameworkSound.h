@@ -15,5 +15,5 @@ using namespace std;
 	//Function to load sound into object
 	bool loadSound(string urlSound);
 
-	//Function to play sound 
+	//Function to play sound. 
 	bool playSound();
