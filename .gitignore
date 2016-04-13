@@ -27,7 +27,6 @@
 *.app
 
 # Project files (own)
-*.vcxproj*
 *.log
 *.tlog
 *.ipch
