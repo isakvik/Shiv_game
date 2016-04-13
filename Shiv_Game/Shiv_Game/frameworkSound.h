@@ -1,3 +1,4 @@
+//  Author: Jesper Dahl ELlingsen  //
 #pragma once
 #include <string>
 #include <windows.h>

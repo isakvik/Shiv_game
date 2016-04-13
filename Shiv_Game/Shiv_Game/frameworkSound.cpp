@@ -1,3 +1,4 @@
+//  Author: Jesper Dahl Ellingsen  //
 #include "frameworkSound.h"
 #include <cstdlib>
 #include <iostream>
