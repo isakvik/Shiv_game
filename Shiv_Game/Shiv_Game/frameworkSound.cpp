@@ -16,7 +16,7 @@ using namespace std;
 							//Variables for loadSound();
 
 
-	//Creates variables to store information about the WAVE file
+	//Creates variables to store information about the WAVE file.
 	char type[4];
 	DWORD size, chunkSize;
 	short formatType, channels;
