@@ -12,10 +12,8 @@ int main( int argc, char* args[] ){
     bool quit = false;
     SDL_Event e;
 
-	frameworkSound obj_1;
-
-	obj_1.loadSound("D:\\GitHub\\Shiv_game\\Shiv_Game\\Shiv_Game\\test.wav");
-	obj_1.playSound();
+	loadSound("D:\\GitHub\\Shiv_game\\Shiv_Game\\Shiv_Game\\test.wav");
+	playSound();
     //While application is running
     while( !quit )
     {

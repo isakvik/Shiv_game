@@ -80,7 +80,7 @@ bool loadSound(string urlSound)
 	fopen_s(&fp, urlSound.c_str(), "r");								//Opens the WAVE file
 	if (fp == NULL)														//Could not open file
 	{
-		cout << type;
+		endWithError("Error: Can't open file");
 	}
 
 
@@ -89,7 +89,7 @@ bool loadSound(string urlSound)
 	fread(type, sizeof(char), 4, fp);									//fread reads the bits of the sound file to find information
 	if (!strcmp(type, "RIFF"))											//Checks if the first four bits contains RIFF
 	{
-		cout << type << "\n";
+		endWithError("Error: No RIFF");
 	}
 
 	fread(&size, sizeof(DWORD), 1, fp);									
@@ -97,13 +97,13 @@ bool loadSound(string urlSound)
 	fread(type, sizeof(char), 4, fp);									
 	if (!strcmp(type, "WAVE"))											
 	{
-		cout << type << "\n";
+		endWithError("Error: No WAVE");
 	}
 
 	fread(type, sizeof(char), 4, fp);									
 	if (!strcmp(type, "fmt ")) 											
 	{	
-		cout << type << "\n";
+		endWithError("Error: No fmt");
 	}
 
 	fread(&chunkSize, sizeof(DWORD), 1, fp);							
@@ -186,9 +186,9 @@ bool loadSound(string urlSound)
 	//Prints out information for debugging purposes
 	cout << "bufferID: " << bufferID << "\n";
 	cout << "sourceID: " << sourceID << "\n";
-	cout << "format: "<< format << "\n";
-	cout << "dataSize: "<< dataSize << "\n";
-	cout << "frequency: "<< frequency << "\n";
+	cout << "format: " << format << "\n";
+	cout << "dataSize: " << dataSize << "\n";
+	cout << "frequency: " << frequency << "\n";
 
 	alBufferData(bufferID, format, data, dataSize, frequency);			//Stores the sound in the OpenAL buffer
 	if (alGetError() != AL_NO_ERROR)										
